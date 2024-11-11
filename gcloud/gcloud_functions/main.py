@@ -23,7 +23,7 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
     DataExtractorObject = DataExtractor()
 
     # Create GCloudIntegrator Object
-    GCloudIntegratorObject = GCloudIntegrator("elexon-project")
+    GCloudIntegratorObject = GCloudIntegrator("elexon-data-project")
 
     # Create timeframe object
     DataConfiguratorObject = DataConfigurator()
