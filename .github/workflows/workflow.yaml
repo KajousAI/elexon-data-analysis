@@ -37,4 +37,5 @@ jobs:
         --entry-point get_elexon_data_and_send_it_to_kafka \
         --region europe-central2 \
         --source ./gcloud/gcloud_functions \
-        --service-account=kajous-serviceaccount-elexon@${{ secrets.GCLOUD_PROJECT_ID }}.iam.gserviceaccount.com
+        --service-account=kajous-serviceaccount-elexon@${{ secrets.GCLOUD_PROJECT_ID }}.iam.gserviceaccount.com \
+        --verbosity=debug
