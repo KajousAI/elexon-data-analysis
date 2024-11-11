@@ -34,7 +34,7 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
     # Get yesterday's date
     # yesterday_date = DataConfiguratorObject.timeframe_window()
 
-    list_of_files = DataExtractorObject.get_list_of_files_to_download(date=yesterday_date)
+    list_of_files = DataExtractorObject.get_list_of_files_to_download()
 
     if not list_of_files:
         print("Issue with fetching elexon data. There is no data from given date.")
