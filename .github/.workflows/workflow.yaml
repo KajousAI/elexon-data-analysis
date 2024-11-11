@@ -1,0 +1,39 @@
+name: Deploy to Google Cloud Functions
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        version: 'latest'
+        project_id: ${{ secrets.GCLOUD_PROJECT_ID }}
+        service_account_key: ${{ secrets.GOOGLECLOUDSERVICEKEY }}
+
+    - name: Authenticate with service account
+      run: |
+        echo '${{ secrets.GOOGLECLOUDSERVICEKEY }}' | jq '.' > $HOME/gcloud-key.json
+        gcloud auth activate-service-account --key-file=$HOME/gcloud-key.json
+
+    - name: Set Project ID
+      run: gcloud config set project ${{ secrets.GCLOUD_PROJECT_ID }}
+
+    - name: Deploy to Google Cloud Functions
+      run: |
+        gcloud functions deploy download-elexon-function \
+        --gen2 \
+        --runtime python311 \
+        --trigger-http \
+        --entry-point get_elexon_data_and_send_it_to_kafka \
+        --region europe-central2 \
+        --source ./gcloud/gcloud_functions 
