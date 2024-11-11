@@ -18,7 +18,6 @@ jobs:
       with:
         version: 'latest'
         project_id: ${{ secrets.GCLOUD_PROJECT_ID }}
-        service_account_key: ${{ secrets.GOOGLECLOUDSERVICEKEY }}
 
     - name: Authenticate with service account
       run: |
@@ -30,7 +29,8 @@ jobs:
 
     - name: Deploy to Google Cloud Functions
       run: |
-        gcloud functions deploy download-elexon-function \
+        gcloud functions deploy download-elexon-function  \
+        --allow-unauthenticated \
         --gen2 \
         --runtime python311 \
         --trigger-http \
