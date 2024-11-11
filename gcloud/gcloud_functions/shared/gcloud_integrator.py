@@ -84,14 +84,14 @@ class GCloudIntegrator:
                 for chunk in response.iter_content(chunk_size=81920):
                     f.write(chunk)
 
-            print(f"Downloaded from {filename_endpoint} to gs://{self.bucket_name}")
+            print(f"Downloaded from {filename_endpoint} to gs://{bucket_name}")
 
         except requests.RequestException as e:
             print(f"Error downloading file: {filename_endpoint}. Error: {e}")
         except Exception as e:
             print(f"Error uploading to GCS: {filename_endpoint}. Error: {e}")
 
-            
+
 # "591906381433"
 # "elexon-project-service-account-secret"
 
