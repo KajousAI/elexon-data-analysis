@@ -44,17 +44,17 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
         # for file in get_availability_data upload file to bucket
         for file in availability_data:
             availability_data_file = DataExtractorObject.download_files_from_availability_data(filename=file)
-            GCloudIntegratorObject.upload_data_to_cloud_from_string("elexon-project-raw-data-bucket", availability_data_file, file)
+            GCloudIntegratorObject.upload_data_to_cloud_from_string("elexon-project-data-bucket", availability_data_file, file)
 
         print("Data fetched successfully.")
 
-        try:
-            # Save availability data filenames in bytes
-            availability_data_filenames_in_bytes = json.dumps(list(availability_data.keys()), indent=2).encode('utf-8')
+        # try:
+        #     # Save availability data filenames in bytes
+        #     availability_data_filenames_in_bytes = json.dumps(list(availability_data.keys()), indent=2).encode('utf-8')
 
-            # Send filenames to kafka
-            kafka.main(f"{yesterday_date}_filenames", availability_data_filenames_in_bytes)
-            return list(availability_data.keys())
-        except Exception as e:
-            print(f"Issue with sending data to kafka {e}.")
-            return []
+        #     # Send filenames to kafka
+        #     kafka.main(f"{yesterday_date}_filenames", availability_data_filenames_in_bytes)
+        #     return list(availability_data.keys())
+        # except Exception as e:
+        #     print(f"Issue with sending data to kafka {e}.")
+        #     return []

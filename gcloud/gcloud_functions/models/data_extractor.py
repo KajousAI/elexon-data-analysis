@@ -7,7 +7,7 @@ import shutil
 class DataExtractor:
     def __init__(self) -> None:
         # self.API = "alzf0zinvzwsfji"  # for aleksandra.matacz93@gmail.com
-        self.API = "m4qq9k87r0vtnld"  # for a.matacz@o2.pl
+        self.API = "h87olofb8vn3at9"  # for robert.f.fabijan@gmail.com
         self.BASE_URL_LIST = "https://downloads.elexonportal.co.uk/p114/list"
         self.BASE_URL_DOWNLOAD = "https://downloads.elexonportal.co.uk/p114/download"
 
