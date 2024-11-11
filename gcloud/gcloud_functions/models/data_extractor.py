@@ -10,6 +10,7 @@ class DataExtractor:
         self.API = "h87olofb8vn3at9"  # for robert.f.fabijan@gmail.com
         self.BASE_URL_LIST = "https://downloads.elexonportal.co.uk/p114/list"
         self.BASE_URL_DOWNLOAD = "https://downloads.elexonportal.co.uk/p114/download"
+        self.DOWNLOAD_DIR = 'downloaded_files'
 
     def get_availability_data(self, date):
         """
@@ -50,16 +51,31 @@ class DataExtractor:
                     r.status_code,
                     r.text))
 
-    def download_files_from_availability_data(self, filename):
 
+    def get_filename_endpoint(self, filename):
+        return f"{self.BASE_URL_DOWNLOAD}?key={self.API}&filename={filename}"
+    
+
+    def download_file(self, filename):
+        """
+        Downloads a file from the Elexon portal and saves it to the download directory.
+        """
         url = f"{self.BASE_URL_DOWNLOAD}?key={self.API}&filename={filename}"
 
-        # Download the file content
-        response = requests.get(url)
-        if response.status_code != 200:
-            raise Exception("Failed to download file from Elexon portal.")
+        try:
+            response = requests.get(url, stream=True)  # Use stream=True for large files
+            response.raise_for_status()
 
-        return response.content
+            filepath = os.path.join(self.DOWNLOAD_DIR, filename)
+
+            with open(filepath, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=8192):  # Download in chunks
+                    f.write(chunk)
+
+            print(f"Downloaded {filename} to {filepath}")
+
+        except requests.RequestException as e:
+            print(f"Error downloading file: {filename}. Error: {e}")
 
     def decompress_downloaded_data(self,
                                    download_destination_folder: str,
@@ -95,19 +111,33 @@ class DataExtractor:
         decompressed_files_list = [x.path for x in os.scandir()]
         return decompressed_files_list
 
-    def get_data_from_url(self, url: str):
+    def get_list_of_files_to_download(self, **kwargs): 
         """
-        Asserts response from url call.
-        Return empty dict if fetching error occurs.
+        Fetches data from a given URL, handling JSON responses.
+        Includes API key for authentication.
         """
         try:
-            response = requests.get(url)
-            response.raise_for_status()  # Raises a HTTPError if the HTTP request returned an unsuccessful status code
+            # Add API key to parameters
+            params = kwargs.get('params', {})
+            params['key'] = self.API
+            kwargs['params'] = params
+
+            response = requests.get(self.BASE_URL_LIST, **kwargs)  # Use **kwargs to pass any additional parameters
+            response.raise_for_status()
             return response.json()
         except requests.RequestException as e:
-            print(f"Error fetching data from URL: {url}. Error: {e}.")
-            return {}  # or raise the exception or return some default value
+            print(f"Error fetching data from URL: {self.BASE_URL_LIST}. Error: {e}")
+            return {}
 
 # x = DataExtractor()
-# x.download_files_from_availability_data("downloaded_files")
-# x.decompress_downloaded_data("decompressed_files")
+
+# file_list_url = "https://downloads.elexonportal.co.uk/p114/list"
+# file_list = x.get_data_from_url(file_list_url)
+# # Assuming the API returns a list of filenames in the JSON response
+# for filename in file_list:
+#     x.download_file(filename)
+# result = x.download_files_from_availability_data("S0142_20240920_SF_20241014111309.gz")
+# result = x.decompress_downloaded_data(download_destination_folder = "downloaded_files", decompress_destination_folder = "decompressed_files")
+# print(result)
+
+

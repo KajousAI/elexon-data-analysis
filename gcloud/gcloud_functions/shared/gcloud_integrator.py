@@ -1,7 +1,7 @@
 from google.cloud import secretmanager_v1
 from google.cloud import storage
 import json
-
+import requests
 
 class GCloudIntegrator:
 
@@ -67,6 +67,31 @@ class GCloudIntegrator:
             print(f"Error when uploading data from string: {e}.")
             return None
 
+    def download_file_to_gcs(self, bucket_name, blob_name, filename_endpoint):
+        """
+        Downloads a file from the Elexon portal and saves it directly to a Google Cloud Storage bucket.
+        """
+        filename_endpoint = filename_endpoint
+
+        try:
+            response = requests.get(filename_endpoint, stream=True)
+            response.raise_for_status()
+
+            bucket = self._get_google_cloud_client().bucket(bucket_name)  # connect to bucket
+            blob = bucket.blob(blob_name)  # create a blob
+
+            with blob.open('wb') as f:
+                for chunk in response.iter_content(chunk_size=81920):
+                    f.write(chunk)
+
+            print(f"Downloaded from {filename_endpoint} to gs://{self.bucket_name}")
+
+        except requests.RequestException as e:
+            print(f"Error downloading file: {filename_endpoint}. Error: {e}")
+        except Exception as e:
+            print(f"Error uploading to GCS: {filename_endpoint}. Error: {e}")
+
+            
 # "591906381433"
 # "elexon-project-service-account-secret"
 
