@@ -27,17 +27,17 @@ jobs:
     - name: Set Project ID
       run: gcloud config set project ${{ secrets.GCLOUD_PROJECT_ID }}
 
-    - name: Grant roles/resourcemanager.projectIamAdmin role
-      run: |
-        gcloud projects add-iam-policy-binding ${{ secrets.GCLOUD_PROJECT_ID }} \
-          --member="serviceAccount:kajous-serviceaccount-elexon@${{ secrets.GCLOUD_PROJECT_ID }}.iam.gserviceaccount.com" \
-          --role="roles/resourcemanager.projectIamAdmin"
+    # - name: Grant roles/resourcemanager.projectIamAdmin role
+    #   run: |
+    #     gcloud projects add-iam-policy-binding ${{ secrets.GCLOUD_PROJECT_ID }} \
+    #       --member="serviceAccount:kajous-serviceaccount-elexon@${{ secrets.GCLOUD_PROJECT_ID }}.iam.gserviceaccount.com" \
+    #       --role="roles/resourcemanager.projectIamAdmin"
 
-    - name: Grant roles/cloudbuild.builds.editor role
-      run: |
-        gcloud projects add-iam-policy-binding ${{ secrets.GCLOUD_PROJECT_ID }} \
-          --member="serviceAccount:kajous-serviceaccount-elexon@${{ secrets.GCLOUD_PROJECT_ID }}.iam.gserviceaccount.com" \
-          --role="roles/cloudbuild.builds.editor"
+    # - name: Grant roles/cloudbuild.builds.editor role
+    #   run: |
+    #     gcloud projects add-iam-policy-binding ${{ secrets.GCLOUD_PROJECT_ID }} \
+    #       --member="serviceAccount:kajous-serviceaccount-elexon@${{ secrets.GCLOUD_PROJECT_ID }}.iam.gserviceaccount.com" \
+    #       --role="roles/cloudbuild.builds.editor"
 
     - name: Deploy to Google Cloud Functions
       run: |
