@@ -43,7 +43,7 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
     else:
         # for file in get_availability_data upload file to bucket
         for file_name in list_of_files:
-            filename_endpoint = DataExtractor.get_filename_endpoint(file_name)
+            filename_endpoint = DataExtractorObject.get_filename_endpoint(filename=file_name)
             GCloudIntegratorObject.upload_data_to_cloud_from_string(
                 bucket_name="elexon-project-data-bucket", 
                 blob_name='elexon-data', 
