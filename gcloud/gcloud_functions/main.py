@@ -22,17 +22,16 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
     # Create DataExtractor Object
     DataExtractorObject = DataExtractor()
 
-    # Create GCloudIntegrator Object
-    GCloudIntegratorObject = GCloudIntegrator("elexon-data-project")
-
     # Create timeframe object
     DataConfiguratorObject = DataConfigurator()
 
-    # # Get project secret
-    # GCloudIntegratorObject.get_secret("elexon-project-service-account-secret")
 
-    # Get yesterday's date
-    # yesterday_date = DataConfiguratorObject.timeframe_window()
+    # Create GCloudIntegrator Object
+    GCloudIntegratorObject = GCloudIntegrator(
+        project_id="elexon-data-project",
+        data_configurator=DataConfiguratorObject
+    )
+
 
     list_of_files = DataExtractorObject.get_list_of_files_to_download()
 
