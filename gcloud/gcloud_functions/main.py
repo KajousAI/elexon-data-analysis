@@ -37,7 +37,7 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
     list_of_files = DataExtractorObject.get_list_of_files_to_download()
 
     if not list_of_files:
-        return "Issue with fetching elexon data. There is no data from given date.")
+        return "Issue with fetching elexon data. There is no data from given date."
 
     else:
         # for file in get_availability_data upload file to bucket
@@ -53,10 +53,6 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
                 continue
     
         return "Data fetched successfully."
-
-    
-
-        
 
         # try:
         #     # Save availability data filenames in bytes
