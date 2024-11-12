@@ -1,10 +1,10 @@
 import functions_framework
 import json
-
+import os
 from shared.gcloud_integrator import GCloudIntegrator
 from models.data_extractor import DataExtractor
 from shared.utils import DataConfigurator
-from models.kafka import kafka
+# from models.kafka import kafka
 
 
 @functions_framework.http
@@ -37,20 +37,26 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
     list_of_files = DataExtractorObject.get_list_of_files_to_download()
 
     if not list_of_files:
-        print("Issue with fetching elexon data. There is no data from given date.")
-        return []
+        return "Issue with fetching elexon data. There is no data from given date.")
 
     else:
         # for file in get_availability_data upload file to bucket
         for file_name in list_of_files:
-            filename_endpoint = DataExtractorObject.get_filename_endpoint(filename=file_name)
-            GCloudIntegratorObject.download_file_to_gcs(
-                bucket_name="elexon-project-data-bucket", 
-                blob_name='elexon-data', 
-                filename_endpoint=filename_endpoint
-            )
+            try:
+                filename_endpoint = DataExtractorObject.get_filename_endpoint(filename=file_name)
+                GCloudIntegratorObject.download_file_to_gcs(
+                    bucket_name="elexon-project-data-bucket", 
+                    blob_name='elexon-data', 
+                    filename_endpoint=filename_endpoint
+                )
+            except Exception as e:
+                continue
+    
+        return "Data fetched successfully."
 
-        print("Data fetched successfully.")
+    
+
+        
 
         # try:
         #     # Save availability data filenames in bytes
