@@ -71,35 +71,37 @@ class GCloudIntegrator:
     def download_file_to_gcs(self, bucket_name, blob_name, filename_endpoint):
         """
         Downloads a file from the Elexon portal and saves it directly to a Google Cloud Storage bucket.
-        Organizes files into subfolders based on their names (e.g., 'SettlementDate_yyyymmdd.gz' 
-        goes into a folder named 'yyyymmdd').
+        Organizes files into subfolders based on their names (e.g., 'S0142_20241107_II_20241112062517.gz' 
+        goes into a folder named 's0142').
         """
         try:
             response = requests.get(filename_endpoint, stream=True)
             response.raise_for_status()
 
             # Extract filename from the endpoint URL
-            filename = filename_endpoint.split('/')[-1]  
+            filename = filename_endpoint.split('filename=')[-1]
 
-            # Extract folder name from filename (assuming format like 'SettlementDate_yyyymmdd.gz')
-            folder_name = filename.split('_')[1].split('.')[0]  # Extract 'yyyymmdd'
-            blob_name = os.path.join(folder_name, filename)  # Path in the bucket: 'yyyymmdd/SettlementDate_yyyymmdd.gz'
+            # Extract folder name from filename 
+            folder_name = filename.split('_')[0]
 
-            bucket = self._get_google_cloud_client().bucket(bucket_name) 
-            blob = bucket.blob(blob_name)
+            if folder_name.lower() == 's0142':
+                blob_name = os.path.join(folder_name, filename)  # Path in the bucket: 'S0142/S0142_20241107_II_20241112062517.gz'
 
-            # Extract file extension
-            file_extension = os.path.splitext(filename)[1]
+                bucket = self._get_google_cloud_client().bucket(bucket_name) 
+                blob = bucket.blob(blob_name)
 
-            # Set the content type to indicate gzip compression
-            if file_extension == '.gz': 
-                blob.content_type = 'application/gzip'
+                # Extract file extension
+                file_extension = os.path.splitext(filename)[1]
 
-            with blob.open('wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
+                # Set the content type to indicate gzip compression
+                if file_extension == '.gz': 
+                    blob.content_type = 'application/gzip'
 
-            print(f"Downloaded from {filename_endpoint} to gs://{bucket_name}/{blob_name}")
+                with blob.open('wb') as f:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+
+                print(f"Downloaded from {filename_endpoint} to gs://{bucket_name}/{blob_name}")
 
         except requests.RequestException as e:
             print(f"Error downloading file: {filename_endpoint}. Error: {e}")
