@@ -5,7 +5,7 @@ import re
 class DataConfigurator:
 
     
-    def extract_date_from_filename(filename):
+    def extract_date_from_filename(self, filename):
         """
         Extracts the date from a filename in the format "S0142_20240924_R1_20241112100408.gz".
 
