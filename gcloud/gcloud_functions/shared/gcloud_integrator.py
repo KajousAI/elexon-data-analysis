@@ -84,8 +84,10 @@ class GCloudIntegrator:
 
             # Extract filename from the endpoint URL
             filename = filename_endpoint.split('filename=')[-1]
+            publish_date = filename.split('_')[-1]
+            
 
-            timestamp = self.DataConfiguratorObject.extract_date_from_filename(filename)
+            timestamp = self.DataConfiguratorObject.extract_date_from_filename(publish_date)
 
             # Extract folder name from filename 
             folder_name = filename.split('_')[0]
